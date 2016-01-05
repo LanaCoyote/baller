@@ -56,6 +56,10 @@ function initialize() {
     baller.physics.ApplyImpulse( new Box2D.Common.Math.b2Vec2( 0, -200 ), baller.physics.GetWorldCenter() );
   })
 
+  input.addBindOnPress( 192, function() {
+    window.debug = !window.debug;
+  })
+
   // var bball = new Basketball(
   //   new Box2D.Common.Math.b2Vec2( 0.1, 2 ),
   //   new Box2D.Common.Math.b2Vec2( 10, -10 )
