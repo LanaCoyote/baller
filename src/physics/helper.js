@@ -25,6 +25,29 @@ function initializeDebugDrawForWorld( world ) {
 
 }
 
+function initializeCollisionListeners( world ) {
+
+  var listener = new Box2D.Dynamics.b2ContactListener;
+
+  var onContact = function( contactType, contact, impulse ) {
+  
+    if ( contact.IsTouching() ) {
+      contactType = "on" + contactType;
+      if ( contact.GetFixtureA().GetBody()[contactType] ) contact.GetFixtureA().GetBody()[contactType]( contact.GetFixtureB().GetBody().GetUserData(), contact, impulse );
+      if ( contact.GetFixtureB().GetBody()[contactType] ) contact.GetFixtureB().GetBody()[contactType]( contact.GetFixtureA().GetBody().GetUserData(), contact, impulse );
+    }
+
+  }
+
+  listener.BeginContact = onContact.bind( null, "BeginContact" );
+  listener.EndContact = onContact.bind( null, "EndContact" );
+  listener.PreSolve = onContact.bind( null, "PreSolve" );
+  listener.PostSolve = onContact.bind( null, "PostSolve" );
+
+  world.SetContactListener( listener );
+
+}
+
 function createWorld() {
 
   var gravity = new Box2D.Common.Math.b2Vec2( 0, 30 );
@@ -32,6 +55,7 @@ function createWorld() {
 
   currentWorld = world;
   initializeDebugDrawForWorld( world );
+  initializeCollisionListeners( world );
   return world;
 
 }
@@ -118,6 +142,8 @@ function createStaticBodyFromFixdef( fixDef, position ) {
   return createBodyWithFixture( bodyDef, fixDef );
 
 }
+
+
 
 module.exports = {
   CreateWorld : createWorld,

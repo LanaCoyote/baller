@@ -5,6 +5,7 @@ function Baller( pos ) {
 
   var fixdef = PhysHelpers.BoxFixtureDef( 2.3, 7.4 );
   var body = this.physics = PhysHelpers.DynamicBodyFromFixtureDef( fixdef, pos );
+  this.physics.SetUserData( this );
 
   this.sprite = new Sprite( "static/images/baller.png", {
     getPos : function() { 
