@@ -254,7 +254,7 @@ function initialize() {
   var baller = new Baller( new Box2D.Common.Math.b2Vec2( 2, 2 ) );
 
   input.addBindOnPress( 32, function() {
-    var throwPoint = new Box2D.Common.Math.b2Vec2( Math.sin( baller.physics.GetAngle() ) * 3, Math.cos( baller.physics.GetAngle() ) * -3 );
+    var throwPoint = new Box2D.Common.Math.b2Vec2( Math.sin( baller.physics.GetAngle() ) * 3.3, Math.cos( baller.physics.GetAngle() ) * -3.3 );
     throwPoint.Add( baller.physics.GetPosition() )
 
     new Basketball(
