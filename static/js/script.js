@@ -180,7 +180,7 @@ Sprite.prototype.draw = function() {
     // var width = (this.options.flipHorizontal ? -this.width/this.image.width : this.width/this.image.width );
     // var height = (this.options.flipVertical ? -this.height/this.image.height : this.height/this.image.height );
 
-    // ctx.scale( width, height );
+    ctx.scale( this.options.flipHorizontal ? -1 : 1, this.options.flipVertical ? -1 : 1 );
 
     // draw it!
     ctx.drawImage( this.image, this.width/-2, this.height/-2, this.width, this.height );
@@ -254,7 +254,7 @@ function initialize() {
   var baller = new Baller( new Box2D.Common.Math.b2Vec2( 2, 2 ) );
 
   input.addBindOnPress( 32, function() {
-    var throwPoint = new Box2D.Common.Math.b2Vec2( Math.sin( baller.physics.GetAngle() ) * 2.7, Math.cos( baller.physics.GetAngle() ) * -2.7 );
+    var throwPoint = new Box2D.Common.Math.b2Vec2( Math.sin( baller.physics.GetAngle() ) * 3.3, Math.cos( baller.physics.GetAngle() ) * -3.3 );
     throwPoint.Add( baller.physics.GetPosition() )
 
     new Basketball(
@@ -273,6 +273,10 @@ function initialize() {
 
   input.addBindOnPress( 38, function() {
     baller.physics.ApplyImpulse( new Box2D.Common.Math.b2Vec2( 0, -200 ), baller.physics.GetWorldCenter() );
+  })
+
+  input.addBindOnPress( 192, function() {
+    window.debug = !window.debug;
   })
 
   // var bball = new Basketball(
@@ -306,6 +310,7 @@ function Baller( pos ) {
 
   var fixdef = PhysHelpers.BoxFixtureDef( 2.3, 7.4 );
   var body = this.physics = PhysHelpers.DynamicBodyFromFixtureDef( fixdef, pos );
+  this.physics.SetUserData( this );
 
   this.sprite = new Sprite( "static/images/baller.png", {
     getPos : function() { 
@@ -329,7 +334,16 @@ function Basketball( pos, velocity ) {
 
   var fixdef = PhysHelpers.CircleFixtureDef( radius );
   var body = this.physics = PhysHelpers.DynamicBodyFromFixtureDef( fixdef, pos );
+  this.physics.SetUserData( this );
   this.physics.ApplyImpulse( velocity, this.physics.GetWorldCenter() );
+
+  this.physics.onPreSolve = function( other, contact, impulse ) {
+    if ( !other ) return;
+
+    if ( other.constructor.name === "Baller" ) {
+      contact.SetEnabled( false );
+    }
+  }
 
   console.log( this.physics.GetWorldCenter() );
 
@@ -371,6 +385,29 @@ function initializeDebugDrawForWorld( world ) {
 
 }
 
+function initializeCollisionListeners( world ) {
+
+  var listener = new Box2D.Dynamics.b2ContactListener;
+
+  var onContact = function( contactType, contact, impulse ) {
+  
+    if ( contact.IsTouching() ) {
+      contactType = "on" + contactType;
+      if ( contact.GetFixtureA().GetBody()[contactType] ) contact.GetFixtureA().GetBody()[contactType]( contact.GetFixtureB().GetBody().GetUserData(), contact, impulse );
+      if ( contact.GetFixtureB().GetBody()[contactType] ) contact.GetFixtureB().GetBody()[contactType]( contact.GetFixtureA().GetBody().GetUserData(), contact, impulse );
+    }
+
+  }
+
+  listener.BeginContact = onContact.bind( null, "BeginContact" );
+  listener.EndContact = onContact.bind( null, "EndContact" );
+  listener.PreSolve = onContact.bind( null, "PreSolve" );
+  listener.PostSolve = onContact.bind( null, "PostSolve" );
+
+  world.SetContactListener( listener );
+
+}
+
 function createWorld() {
 
   var gravity = new Box2D.Common.Math.b2Vec2( 0, 30 );
@@ -378,6 +415,7 @@ function createWorld() {
 
   currentWorld = world;
   initializeDebugDrawForWorld( world );
+  initializeCollisionListeners( world );
   return world;
 
 }
@@ -464,6 +502,8 @@ function createStaticBodyFromFixdef( fixDef, position ) {
   return createBodyWithFixture( bodyDef, fixDef );
 
 }
+
+
 
 module.exports = {
   CreateWorld : createWorld,

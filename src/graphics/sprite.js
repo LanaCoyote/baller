@@ -107,7 +107,7 @@ Sprite.prototype.draw = function() {
     // var width = (this.options.flipHorizontal ? -this.width/this.image.width : this.width/this.image.width );
     // var height = (this.options.flipVertical ? -this.height/this.image.height : this.height/this.image.height );
 
-    // ctx.scale( width, height );
+    ctx.scale( this.options.flipHorizontal ? -1 : 1, this.options.flipVertical ? -1 : 1 );
 
     // draw it!
     ctx.drawImage( this.image, this.width/-2, this.height/-2, this.width, this.height );

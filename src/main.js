@@ -35,7 +35,7 @@ function initialize() {
   var baller = new Baller( new Box2D.Common.Math.b2Vec2( 2, 2 ) );
 
   input.addBindOnPress( 32, function() {
-    var throwPoint = new Box2D.Common.Math.b2Vec2( Math.sin( baller.physics.GetAngle() ) * 2.7, Math.cos( baller.physics.GetAngle() ) * -2.7 );
+    var throwPoint = new Box2D.Common.Math.b2Vec2( Math.sin( baller.physics.GetAngle() ) * 3.3, Math.cos( baller.physics.GetAngle() ) * -3.3 );
     throwPoint.Add( baller.physics.GetPosition() )
 
     new Basketball(
@@ -54,6 +54,10 @@ function initialize() {
 
   input.addBindOnPress( 38, function() {
     baller.physics.ApplyImpulse( new Box2D.Common.Math.b2Vec2( 0, -200 ), baller.physics.GetWorldCenter() );
+  })
+
+  input.addBindOnPress( 192, function() {
+    window.debug = !window.debug;
   })
 
   // var bball = new Basketball(

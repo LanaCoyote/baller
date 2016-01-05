@@ -7,7 +7,16 @@ function Basketball( pos, velocity ) {
 
   var fixdef = PhysHelpers.CircleFixtureDef( radius );
   var body = this.physics = PhysHelpers.DynamicBodyFromFixtureDef( fixdef, pos );
+  this.physics.SetUserData( this );
   this.physics.ApplyImpulse( velocity, this.physics.GetWorldCenter() );
+
+  this.physics.onPreSolve = function( other, contact, impulse ) {
+    if ( !other ) return;
+
+    if ( other.constructor.name === "Baller" ) {
+      contact.SetEnabled( false );
+    }
+  }
 
   console.log( this.physics.GetWorldCenter() );
 
