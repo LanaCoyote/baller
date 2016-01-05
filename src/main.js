@@ -24,7 +24,7 @@ function initialize() {
   for ( var j = 5; j > 0; --j ) {
     for ( var i = 0; i < j; ++i ) {
       var bball = new Basketball( 
-        new Box2D.Common.Math.b2Vec2( 15 + ((5-j)/2) + i, 6 + j ),
+        new Box2D.Common.Math.b2Vec2( 15 + ((5-j)/2) + i, 6.5 + (j * 0.9) ),
         new Box2D.Common.Math.b2Vec2( 0, 0 )
       );
 
@@ -53,7 +53,7 @@ function initialize() {
   })
 
   input.addBindOnPress( 38, function() {
-    baller.physics.ApplyImpulse( new Box2D.Common.Math.b2Vec2( 0, -200 ), baller.physics.GetWorldCenter() );
+    baller.physics.ApplyImpulse( new Box2D.Common.Math.b2Vec2( 0, -250 ), baller.physics.GetWorldCenter() );
   })
 
   input.addBindOnPress( 192, function() {
